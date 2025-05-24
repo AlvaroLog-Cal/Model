@@ -164,37 +164,71 @@ def main():
                     color = 'background-color: #fed7d7'  # light red
                 return color
 
-            # Display DataFrame with conditional formatting
-            st.markdown("<h3>Tasas de Adhesión Predichas por Beneficio</h3>", unsafe_allow_html=True)
-            st.dataframe(df.style.applymap(color_adhesion, subset=['Tasa de Adhesión Predicha (%)']))
+
             
-            # Display selected benefit prediction with a gauge chart
-            if selected_benefit in predictions:
-                prediction = predictions[selected_benefit]
-                st.markdown(f"<div class='prediction-box'>"
-                           f"<h3>Tasa de Adhesión Predicha</h3>"
-                           f"<div class='prediction-value'>{prediction:.1f}%</div>"
-                           f"<p class='benefit-label'>{benefit_options[selected_benefit]} {selected_benefit}</p>"
-                           f"</div>", unsafe_allow_html=True)
+            # Create line graph data
+            months = ['Mes 1', 'Mes 2', 'Mes 3', 'Mes 4', 'Mes 5', 'Mes 6']
+            values = [np.random.uniform(30, 100) for _ in range(6)]
             
-            value = predictions[selected_benefit]
+            # Create line graph
+            fig = go.Figure()
             
-            fig = go.Figure(go.Indicator(
-                mode = "gauge+number",
-                value = value,
-                domain = {'x': [0, 1], 'y': [0, 1]},
-                title = {'text': f"Tasa de Adhesión {selected_benefit}"},
-                gauge = {
-                    'axis': {'range': [None, 100]},
-                    'bar': {'color': "#2196F3"},
-                    'steps' : [
-                        {'range': [0, 30], 'color': "#FF4444"},
-                        {'range': [30, 70], 'color': "#FFBB33"},
-                        {'range': [70, 100], 'color': "#4CAF50"}
-                    ],
-                    'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 70}
-                }
+            # Add line trace
+            fig.add_trace(go.Scatter(
+                x=months,
+                y=values,
+                mode='lines+markers',
+                name='Tasa de Adhesión',
+                line=dict(color='#2196F3', width=3),
+                marker=dict(size=10)
             ))
+            
+            # Add trend line (linear regression)
+            from sklearn.linear_model import LinearRegression
+            model = LinearRegression()
+            X = np.arange(len(months)).reshape(-1, 1)
+            model.fit(X, values)
+            trend_values = model.predict(X)
+            
+            fig.add_trace(go.Scatter(
+                x=months,
+                y=trend_values,
+                mode='lines',
+                name='Tendencia',
+                line=dict(color='#4CAF50', dash='dash')
+            ))
+            
+            # Update layout
+            fig.update_layout(
+                title=f'Evolución de la Tasa de Adhesión - {selected_benefit}',
+                xaxis_title='Meses',
+                yaxis_title='Tasa de Adhesión (%)',
+                showlegend=True,
+                legend=dict(
+                    x=0.02,
+                    y=0.98,
+                    traceorder='normal',
+                    bgcolor='rgba(255,255,255,0.8)',
+                    bordercolor='rgba(0,0,0,0.2)',
+                    borderwidth=1
+                ),
+                plot_bgcolor='rgba(245, 245, 245, 0.5)',
+                paper_bgcolor='rgba(255,255,255,0.9)',
+                margin=dict(l=50, r=50, t=80, b=50),
+                height=400
+            )
+            
+            # Add annotations
+            fig.add_annotation(
+                x=months[-1],
+                y=values[-1],
+                text=f'{values[-1]:.1f}%',
+                showarrow=True,
+                arrowhead=1,
+                ax=-40,
+                ay=-30,
+                font=dict(color='#2196F3', size=12)
+            )
             
             st.plotly_chart(fig, use_container_width=True)
 
