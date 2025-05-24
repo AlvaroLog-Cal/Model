@@ -240,12 +240,25 @@ def main():
                 font=dict(color='#2196F3', size=12)
             )
             
-            # Add vertical line at current month
-            current_month = months[-1]
-            fig.add_vline(
-                x=current_month,
-                line=dict(color='#2196F3', dash='dot'),
-                annotation_text='Mes Actual'
+            # Add vertical line at current month using shape
+            current_month_index = len(months) - 1
+            fig.add_shape(
+                type='line',
+                x0=current_month_index, x1=current_month_index,
+                y0=0, y1=1,
+                xref='x', yref='paper',
+                line=dict(color='#2196F3', dash='dot', width=2)
+            )
+            
+            # Add annotation for current month
+            fig.add_annotation(
+                x=current_month_index,
+                y=0.95,
+                yref='paper',
+                text='Mes Actual',
+                showarrow=False,
+                font=dict(color='#2196F3', size=12),
+                xanchor='right'
             )
             
             st.plotly_chart(fig, use_container_width=True)
