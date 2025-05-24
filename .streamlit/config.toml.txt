@@ -1,0 +1,8 @@
+/your-app/
+│
+├── app.py
+├── requirements.txt
+└── .streamlit/
+    └── config.toml
+[theme]
+base = "light"

@@ -1,0 +1,13 @@
+[theme]
+base = "light"
+primaryColor = "#2196F3"
+secondaryBackgroundColor = "#f0f2f6"
+textColor = "#31333F"
+font = "sans serif"
+
+[server]
+port = 8501
+address = "0.0.0.0"
+
+[runner]
+forceLightMode = true
