@@ -169,6 +169,18 @@ def main():
             # Create line graph data
             months = ['Mes 1', 'Mes 2', 'Mes 3', 'Mes 4', 'Mes 5', 'Mes 6']
             values = [np.random.uniform(30, 100) for _ in range(6)]
+            final_percentage = round(values[-1], 1)
+            
+            # Display percentage box
+            st.markdown("""
+            <div style='text-align: center; margin-bottom: 1.5rem;'>
+                <div style='display: inline-block; padding: 1rem 2rem; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>
+                    <div style='font-size: 1.5rem; color: #2196F3; margin-bottom: 0.5rem;'>Tasa de Adhesión</div>
+                    <div style='font-size: 2.5rem; color: #2196F3; font-weight: bold;'>{final_percentage}%</div>
+                    <div style='font-size: 1rem; color: #64b5f6;'>{selected_benefit}</div>
+                </div>
+            </div>
+            """.format(final_percentage=final_percentage, selected_benefit=selected_benefit), unsafe_allow_html=True)
             
             # Create line graph
             fig = go.Figure()
@@ -226,6 +238,14 @@ def main():
                 ax=-40,
                 ay=-30,
                 font=dict(color='#2196F3', size=12)
+            )
+            
+            # Add vertical line at current month
+            current_month = months[-1]
+            fig.add_vline(
+                x=current_month,
+                line=dict(color='#2196F3', dash='dot'),
+                annotation_text='Mes Actual'
             )
             
             st.plotly_chart(fig, use_container_width=True)
