@@ -183,12 +183,10 @@ def main():
                 marker=dict(size=10)
             ))
             
-            # Add trend line (linear regression)
-            from sklearn.linear_model import LinearRegression
-            model = LinearRegression()
-            X = np.arange(len(months)).reshape(-1, 1)
-            model.fit(X, values)
-            trend_values = model.predict(X)
+            # Calculate simple trend line using first and last points
+            start_point = values[0]
+            end_point = values[-1]
+            trend_values = np.linspace(start_point, end_point, len(months))
             
             fig.add_trace(go.Scatter(
                 x=months,
