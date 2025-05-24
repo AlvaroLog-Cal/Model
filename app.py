@@ -3,6 +3,14 @@ import pandas as pd
 from PIL import Image
 import numpy as np
 import plotly.graph_objects as go
+import os
+
+# Set page configuration
+st.set_page_config(
+    page_title="Predictor de Adhesión a Beneficios",
+    page_icon="🎯",
+    layout="wide"
+)
 
 # Streamlit app
 def main():
@@ -140,6 +148,26 @@ def main():
                 'FORMACIÓN': np.random.uniform(65, 90)
             }
             
+            # Prepare DataFrame for all benefits
+            df = pd.DataFrame({
+                'Beneficio': [f"{benefit_options[b]} {b}" for b in predictions.keys()],
+                'Tasa de Adhesión Predicha (%)': [round(v, 1) for v in predictions.values()]
+            })
+
+            # Define a function for conditional formatting
+            def color_adhesion(val):
+                if val >= 80:
+                    color = 'background-color: #c6f6d5'  # light green
+                elif val >= 60:
+                    color = 'background-color: #fefcbf'  # light yellow
+                else:
+                    color = 'background-color: #fed7d7'  # light red
+                return color
+
+            # Display DataFrame with conditional formatting
+            st.markdown("<h3>Tasas de Adhesión Predichas por Beneficio</h3>", unsafe_allow_html=True)
+            st.dataframe(df.style.applymap(color_adhesion, subset=['Tasa de Adhesión Predicha (%)']))
+            
             # Display selected benefit prediction with a gauge chart
             if selected_benefit in predictions:
                 prediction = predictions[selected_benefit]
@@ -172,3 +200,22 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    # Add footer
+    st.markdown("""
+    <style>
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: #f8f9fa;
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+    </style>
+    <div class="footer">
+        <p>Powered by AI & Data Science | Contacto: support@empresa.com | © 2025 Todos los derechos reservados</p>
+    </div>
+    """, unsafe_allow_html=True)
